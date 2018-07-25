@@ -1,0 +1,133 @@
+{
+  "version": "0.0.1",
+  "auth": {
+    "method": "open"
+  },
+  "name": "DAP_Map_v2",
+  "placeholders": {
+    "layer0": {
+      "type": "number",
+      "default": 1
+    },
+    "layer1": {
+      "type": "number",
+      "default": 1
+    },
+    "layer2": {
+      "type": "number",
+      "default": 1
+    },
+    "layer3": {
+     "type": "number",
+     "default": 1
+    },
+    "layer4": {
+      "type": "number",
+      "default": 1
+    },
+    "layer5": {
+     "type": "number",
+     "default": 1
+    },
+    "layer6": {
+     "type": "number",
+     "default": 1
+    },
+    "color": {
+      "type": "css_color",
+      "default": "#FF6600"
+    },
+    "nycc_boundary": {
+      "type": "css_color",
+      "default": "#FFF"
+    },
+    "nycd_boundary": {
+      "type": "css_color",
+      "default": "blue"
+    },
+    "zipcode_boundary": {
+      "type": "css_color",
+      "default": "green"
+    }
+  },
+  "layergroup": {
+    "layers": [
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#dapmap4_5{polygon-fill:#aaaaaa;polygon-opacity:0.2;line-color:#FFF;line-width:0;line-opacity:0;}#dapmap4_5[risks=3]{polygon-fill:#e31a1c;polygon-opacity:0.8;}#dapmap4_5[risks=2]{polygon-fill:#fd8d3c;polygon-opacity:0.8;}#dapmap4_5[risks=1]{polygon-fill:#ffffcc;polygon-opacity:0.8;}#dapmap4_5[risks=0]{polygon-fill:#aaaaaa;polygon-opacity:0.2;}",
+          "sql": "select * from dapmap4_5 where <%= layer0 %> = 1",
+          "interactivity": ["cartodb_id", "bbl", "address", "unitsres", "unitscomm", "risks", "zipcode", "borocode", "borough", "block", "lot", "hpdlink"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#dapmap4_5{polygon-fill:#aaaaaa;polygon-opacity:0.2;line-color:#FFF;line-width:0;line-opacity:1;}#dapmap4_5[uc2007>0],#dapmap4_5[uc2016>0]{polygon-fill:#fafce5;polygon-opacity:0.8;}#dapmap4_5[stabloss<=20000]{polygon-fill:#88ce65;polygon-opacity:0.8;}#dapmap4_5[stabloss<50]{polygon-fill:#ddffcc;polygon-opacity:0.8;}#dapmap4_5[stabloss<5]{polygon-fill:#fafce5;polygon-opacity:0.8;}#dapmap4_5[stabloss<-1]{polygon-fill:#fed976;polygon-opacity:0.8;}#dapmap4_5[stabloss<-25]{polygon-fill:#fd8d3c;polygon-opacity:0.8;}#dapmap4_5[stabloss<-50]{polygon-fill:#e31a1c;polygon-opacity:0.8;}#dapmap4_5[stabloss<-75]{polygon-fill:#800026;polygon-opacity:0.8;}",
+          "sql": "select * from dapmap4_5 where <%= layer1 %> = 1",
+          "interactivity": ["cartodb_id", "bbl", "address", "uc2007", "uc2016", "stabloss", "unitsres", "unitscomm", "yearbuilt", "ownername", "zipcode", "borocode", "borough", "block", "lot", "hpdlink"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#dapmap4_5{polygon-fill:#aaa;polygon-opacity:0.2;line-color:#FFF;line-width:0;line-opacity:1;}#dapmap4_5[dobscore<=10000]{polygon-fill:#800026;polygon-opacity:0.8;}#dapmap4_5[dobscore<=500]{polygon-fill:#bd0026;polygon-opacity:0.8;}#dapmap4_5[dobscore<=200]{polygon-fill:#fc4e2a;polygon-opacity:0.8;}#dapmap4_5[dobscore<=100]{polygon-fill:#fd8d3c;polygon-opacity:0.8;}#dapmap4_5[dobscore<=50]{polygon-fill:#feb24c;polygon-opacity:0.8;}#dapmap4_5[dobscore<=25]{polygon-fill:#fed976;polygon-opacity:0.8;}#dapmap4_5[dobscore<=10]{polygon-fill:#ffffcc;polygon-opacity:0.8;}#dapmap4_5[dobscore=0]{polygon-fill:#aaa;polygon-opacity:0.2;}",
+          "sql": "select * from dapmap4_5 where <%= layer2 %> = 1",
+          "interactivity": ["cartodb_id", "bbl", "address", "a1", "a2", "dm", "nb", "unitsres", "unitscomm", "total", "dobscore", "ownername", "zipcode", "borocode", "borough", "block", "lot", "hpdlink"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#dapmap4_5 {polygon-fill:#aaa;polygon-opacity:0.2;line-color:#fff;line-width:0;line-opacity:1;}#dapmap4_5 [ppuval < 9999999999]{polygon-fill:#800026;polygon-opacity:.8}#dapmap4_5 [ppuval < 1000000]{polygon-fill:#bd0026;polygon-opacity:.8}#dapmap4_5 [ppuval < 750000]{polygon-fill:#fc4e2a;polygon-opacity:.8}#dapmap4_5 [ppuval < 500000]{polygon-fill:#fd8d3c;polygon-opacity:.8}#dapmap4_5 [ppuval < 350000]{polygon-fill:#feb24c;polygon-opacity:.8}#dapmap4_5 [ppuval < 200000]{polygon-fill:#fed976;polygon-opacity:.8}#dapmap4_5 [ppuval < 100000]{polygon-fill:#ffffcc;polygon-opacity:.8}",
+          "sql": "select * from dapmap4_5 where <%= layer3 %> = 1",
+          "interactivity": ["cartodb_id", "bbl", "address", "saledate", "saleprice", "unitsres", "unitscomm", "ppuval", "ppu", "ownername", "zipcode", "borocode", "borough", "block", "lot", "hpdlink"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#nycd_new2{polygon-fill:#2dc103;polygon-opacity:0;line-color:#f1d2ff;line-width:1;line-opacity:1;}#nycd_new2::labels{text-name:[borocd2];text-face-name:'DejaVu Sans Bold';text-size:16;text-label-position-tolerance:0;text-fill:#f1d2ff;text-halo-fill:#fff;text-halo-radius:0;text-dy:0;text-allow-overlap:true;text-placement:interior;text-placement-type:simple;}#nycd_new2::labels[zoom<14]{text-size:12;}#nycd_new2::labels[zoom<12]{text-size:10;}#nycd_new2::labels[zoom<8]{text-size:8;}",
+          "sql": "select * from nycd_new2 where <%= layer4 %> = 1",
+          "interactivity": ["cartodb_id"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#nycc{polygon-fill:#FF6600;polygon-opacity:0;line-color:#ffffff;line-width:1;line-opacity:1;}#nycc::labels{text-name:'Council '+[coundist];text-face-name:'DejaVu Sans Bold';text-size:16;text-label-position-tolerance:0;text-fill:#ffffff;text-halo-fill:#333333;text-halo-radius:0;text-allow-overlap:true;text-placement:interior;text-placement-type:simple;}#nycc::labels[zoom<14]{text-size:12;}#nycc::labels[zoom<12]{text-size:10;}#nycc::labels[zoom<8]{text-size:8;}",
+          "sql": "select * from nycc_merge where <%= layer5 %> = 1",
+          "interactivity": ["cartodb_id"]
+        }
+      },
+      {
+        "type": "cartodb",
+        "options": {
+          "cartocss_version": "2.1.1",
+          "cartocss": "#zipcode{polygon-fill:#FF6600;polygon-opacity:0;line-color:#e2ffda;line-width:1;line-opacity:1;}#zipcode::labels{text-name:[zipcode];text-face-name:'DejaVu Sans Bold';text-size:16;text-label-position-tolerance:0;text-fill:#e2ffda;text-halo-fill:#333333;text-halo-radius:0;text-allow-overlap:false;text-placement:interior;text-placement-type:simple;}#zipcode::labels[zoom<14]{text-size:12;}#zipcode::labels[zoom<12]{text-size:8;}",
+          "sql": "select * from nyc_zip_codes where <%= layer6 %> = 1",
+          "interactivity": ["cartodb_id"]
+        }
+      }
+    ]
+  },
+  "view": {
+    "zoom": 12,
+    "center": {
+      "lng": -73.946571,
+      "lat": 40.694045
+    },
+    "bounds": {
+      "west": -45,
+      "south": -45,
+      "east": 45,
+      "north": 45
+    }
+  }
+}
