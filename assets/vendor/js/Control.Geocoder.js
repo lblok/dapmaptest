@@ -53,16 +53,24 @@ module.exports = {
 				container);
 
 			L.DomEvent.addListener(input, 'keydown', this._keydown, this);
-			L.DomEvent.addListener(input, 'blur', function() {
+			L.DomEvent.addListener(input, 'blur', function(e) {
 				if (this.options.collapsed) {
 					this._collapse();
 				}
 			}, this);
 
+			L.DomEvent.addListener(input, 'click', function(e) {
+				L.DomEvent.preventDefault(e);
+				L.DomEvent.stopPropagation(e);
+				console.log("fire");
+			}, this);
 
-			if (this.options.collapsed) {
+
+			if (this.options.collapsed) {				
 				if (this.options.expand === 'click') {
 					L.DomEvent.addListener(icon, 'click', function(e) {
+						L.DomEvent.preventDefault(e);
+						L.DomEvent.stopPropagation(e);
 						// TODO: touch
 						if (e.button === 0 && e.detail !== 2) {
 							this._toggle();
@@ -167,7 +175,7 @@ module.exports = {
 		_expand: function () {
 			L.DomUtil.addClass(this._container, 'leaflet-control-geocoder-expanded');
 			this._input.select();
-			this.fire('expand');
+			this.fire('expand');	
 		},
 
 		_collapse: function () {
@@ -193,6 +201,11 @@ module.exports = {
 					this._geocodeResultSelected(result);
 				};
 
+				stopClickPropogation = function stopClickPropogation(e) {
+					L.DomEvent.preventDefault(e);
+					
+				};
+
 			if (icon) {
 				icon.src = result.icon;
 			}
@@ -205,6 +218,7 @@ module.exports = {
 				a.appendChild(text);
 			}
 
+			L.DomEvent.addListener(li, 'click', stopClickPropogation, this);
 			L.DomEvent.addListener(li, 'mousedown', clickHandler, this);
 
 			return li;

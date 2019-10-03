@@ -1,12 +1,9 @@
-# ANHD DAP MAP
+# ANHD DAP Map v2.0 (under development)
 Developed by the [Association For Neighborhood and Housing Development, Inc.
-(ANHD)](http://www.anhd.org), the Displacement Alert Project (DAP) is to
-be an important new organizing, advocacy, and policy development tool that provides
-crucial information about recent building transactions where tenants might be facing
-excessive displacement pressure.
+(ANHD)](http://www.anhd.org), the Displacement Alert Project (DAP) Map (http://www.dapmapnyc.org) is an important organizing, advocacy, and policy development tool that provides crucial information about recent building transactions where tenants might be facing excessive displacement pressure. The lblok/dapmap repository is the 2018 version of DAP Map being updated by Lucy Block. It builds off of https://github.com/ANHD-NYC/SAMP, which was built by <a href="https://github.com/clhenrick">@clhenrick</a> and <a href="https://github.com/jdgodchaux">@jdgodchaux</a> of <a href="http://nijel.org">NiJeL</a> (see commit history <a href="https://github.com/ANHD-NYC/SAMP/commits/master">here</a>).
 
 ## Dependencies
-- [CartoDB](http://cartodb.com) paid account
+- [Carto](http://cartodb.com) paid account
 - [CartoDB.JS](https://github.com/CartoDB/cartodb.js/) @3.15
 - [CartoDB Named Maps API](http://docs.cartodb.com/cartodb-platform/maps-api/named-maps/) @v1
 - [Leaflet.JS](http://leafletjs.com) @0.7.7
@@ -45,7 +42,7 @@ instantiate it with the `cartodb.createLayer()` method which is passed a Named M
 `layerSource` config object in the client.
 
 If you'd like to do this via an API call then you would need to pass a `params.json`
-file containing values for `placeholders` in the config file. If you don't want to
+file containing values ffor `placeholders` in the config file. If you don't want to
 override the default values, just have an empty object in `params.json` when making
 the API call.
 
@@ -55,7 +52,7 @@ Sample API call:
 curl -X POST \
   -H 'Content-Type: application/json' \
   -d @params.json \
-  'https://anhdnyc.cartodb.com/api/v1/map/named/samp_test'
+  'https://anhdnyc.cartodb.com/api/v1/map/named/DAP_Map_v2'
 
 # sample response:
 # "layergroupid":"anhdnyc@3ce3cc8d@d18b4ae3f34028a99ea3db066a60a612:1459188148983"
@@ -72,7 +69,7 @@ Use a `PUT` action to modify it with the updated config file. Note that the the 
 
 ```bash
 curl -X PUT \
-  'https://anhdnyc.cartodb.com/api/v1/map/named/samp_test?api_key={anhd-api-key}' \
+  'https://anhdnyc.cartodb.com/api/v1/map/named/DAP_Map_v2?api_key={anhd-api-key}' \
   -H 'Content-Type: application/json' \
   -d @template.json
 

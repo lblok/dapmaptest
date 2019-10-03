@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Basic Page Needs–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <title>Displacement Alert Map | ANHD</title>
+  <meta charset="utf-8"/>
+  <meta name="description" content="The Displacement Alert Map, more than a decade of key data on residential displacement in New York City">
+  <meta name="author" content="ANHD">
+  <meta name="keywords" content="tenant,harassment,displacement,risk,NYC,ANHD,DAP Map">
+  <!-- Mobile Specific Metas–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- ANHD FAVICON–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="shortcut icon" href="https://static.wixstatic.com/media/555352_47f33c436d7d4cb1be9f219a97596a02%7Emv2.png/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/555352_47f33c436d7d4cb1be9f219a97596a02%7Emv2.png" type="image/png"/>
+  <link rel="apple-touch-icon" href="https://static.wixstatic.com/media/555352_47f33c436d7d4cb1be9f219a97596a02%7Emv2.png/v1/fill/w_32%2Ch_32%2Clg_1%2Cusm_0.66_1.00_0.01/555352_47f33c436d7d4cb1be9f219a97596a02%7Emv2.png" type="image/png"/>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-123106346-2"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-123106346-2');
+  </script>
+
+  <!-- FONT –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href='//fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900' rel='stylesheet' type='text/css'>
+  <link href='//fonts.googleapis.com/css?family=Raleway:400,300,600' rel='stylesheet' type='text/css'>
+  <script src="https://use.fontawesome.com/79e3583a1d.js"></script>
+
+  <!-- MAPBOX –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.46.0/mapbox-gl.js'></script>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+
+
+  <!-- CSS –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" type="text/css" href="assets/vendor/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="assets/vendor/css/cartodb.css" />
+  <link rel="stylesheet" type="text/css" href="assets/vendor/css/skeleton.css">
+  <link rel="stylesheet" type="text/css" href="assets/vendor/css/Control.Geocoder.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/main.css">
+
+  <!-- Custom CartoDB Infowindow Templates –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script type="infowindow/html" id="rentregscore_infowindow">
+    <div class="cartodb-popup v2">
+      <a href="#close" class="cartodb-popup-close-button close">x</a>
+       <div class="cartodb-popup-content-wrapper">
+         <div class="cartodb-popup-header">
+           <h2>{{content.data.address}}</h2>
+         </div>
+         <div class="cartodb-popup-content upper">
+            <h3>{{content.data.borough}}  {{content.data.zipcode}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <span class = "smtext">BBL: {{content.data.bbl}}</span></h3>         </div>
+         {{#content.data.numbldgs}}
+          <div class="cartodb-popup-content">
+            <h3>Number of Buildings: <strong>{{content.data.numbldgs}}</strong></h3>
+         </div>
+         {{/content.data.numbldgs}}
+         {{#content.data.unitsres}}
+         <div class="cartodb-popup-content">
+           <h3>Residential Units: <strong>{{content.data.unitsres}}</strong></h3>
+         </div>
+         {{/content.data.unitsres}}
+         {{#content.data.unitscomm}}
+         <div class="cartodb-popup-content">
+           <h3>Commercial Units: <strong>{{content.data.unitscomm}}</strong></h3>
+         </div>
+         {{/content.data.unitscomm}}
+         {{#content.data.yearbuilt}}
+         <div class="cartodb-popup-content">
+           <h3>Year Built: <strong>{{content.data.yearbuilt}}</strong></h3>
+         </div>
+         {{/content.data.yearbuilt}}
+         {{#content.data.uc2007}}
+         <div class="cartodb-popup-content">
+           <h3>Stabilized Units in 2007: <strong>{{content.data.uc2007}}</strong></h3>
+         </div>
+         {{/content.data.uc2007}}
+         {{#content.data.uc2017}}
+         <div class="cartodb-popup-content">
+           <h3>Stabilized Units in 2017: <strong>{{content.data.uc2017}}</strong></h3>
+         </div>
+         {{/content.data.uc2017}}
+         {{#content.data.stabloss}}
+         <div class="cartodb-popup-content">
+           <h3>Percent Change Since 2007: <strong><span id="pctchange">{{content.data.stabloss}}</span></strong></h3>
+         </div>
+         {{/content.data.stabloss}}      
+         <div class="cartodb-popup-content gray">
+          <h3><div class="linkstext"> Links:</div></h3>
+             <h6>
+            <div>
+              <div class>
+                <a href="https://portal.displacementalert.org/property/{{content.data.bbl}}" target="_blank"><strong>DAP Portal (New!)</strong></a>&nbsp;
+              </div>
+                <div title="Note: The HPD portal will only show data for one building, but if there are others on the same property it will show &quot;Other Buildings on This Lot.&quot;">
+                 <a href="{{content.data.hpdlink}}" target="_blank">Housing Pres. and Development (HPD)</a>
+               </div>
+               <div class>
+                <div title="Note: The DOB Building Information System will only show information for one building, even if there are multiple buildings on a property. If that's the case, you can click &quot;Buildings on Lot&quot; to view the others."> 
+                  <a href="http://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Department of Buildings (DOB)</a>&nbsp;
+                </div>
+               <div class>
+                <div title="Note: Staten Island property documents are available through the Richmond County Clerk's office, not ACRIS">
+                 <a href="http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Property documents (ACRIS)</a>&nbsp;
+               </div>
+               <div>
+                 <a href="http://whoownswhat.justfix.nyc/bbl/{{content.data.borocode}}/{{content.data.block}}/{{content.data.lot}}" target="_blank">Ownership (Who Owns What)</a>            
+               </div>
+               <div>
+                 <a href="http://www.oasisnyc.net/map.aspx?zoomto=lot:{{content.data.bbl}}" target="_blank">Land Use info (OASIS)</a>
+               </div>
+            </h6>
+           </div>        
+        </div>
+        <div class="cartodb-popup-tip-container"></div>
+      </div>
+    </script>
+    <script type="infowindow/html" id="dofscore_infowindow">
+      <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+         <div class="cartodb-popup-content-wrapper">
+            <div class="cartodb-popup-header">
+                <h2>{{content.data.address}}</h2>
+            </div>
+            <div class="cartodb-popup-content upper">
+                <h3>{{content.data.borough}}  {{content.data.zipcode}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <span class = "smtext">BBL: {{content.data.bbl}}</span></h3>             
+            </div>
+           {{#content.data.unitsres}}
+           {{#content.data.numbldgs}}
+           <div class="cartodb-popup-content">
+             <h3>Number of Buildings: <strong>{{content.data.numbldgs}}</strong></h3>
+           </div>
+           {{/content.data.numbldgs}}
+           <div class="cartodb-popup-content">
+             <h3>Residential Units: <strong>{{content.data.unitsres}}</strong></h3>
+           </div>
+           {{/content.data.unitsres}}
+           {{#content.data.unitscomm}}
+           <div class="cartodb-popup-content">
+             <h3>Commercial Units: <strong>{{content.data.unitscomm}}</strong></h3>
+           </div>
+           {{/content.data.unitscomm}}
+           {{#content.data.saledate}}
+           <div class="cartodb-popup-content">
+             <h3>Sale Date: <strong>{{content.data.saledate}}</strong></h3>
+           </div>
+           {{/content.data.saledate}}
+           {{#content.data.saleprice}}
+           <div class="cartodb-popup-content">
+             <h3>Sale Price: <strong><span id="saleprice">{{content.data.saleprice}}</span></strong></h3>
+           </div>
+           {{/content.data.saleprice}}
+           {{#content.data.ppu}}
+           <div class="cartodb-popup-content">
+             <h3>Price per Unit: <strong>{{content.data.ppu}}</strong></h3>
+           </div>
+           {{/content.data.ppu}}  
+           <div class="cartodb-popup-content gray">
+            <h3><div class="linkstext"> Links:</div></h3>
+               <h6>
+              <div>
+                 <div class>
+                      <a href="https://portal.displacementalert.org/property/{{content.data.bbl}}" target="_blank"><strong>DAP Portal (New!)</strong></a>&nbsp;
+                 </div>                  
+                 <div title="Note: The HPD portal will only show data for one building, but if there are others on the same property it will show &quot;Other Buildings on This Lot.&quot;">
+                   <a href="{{content.data.hpdlink}}" target="_blank">Housing Pres. and Development (HPD)</a>
+                 </div>
+                 <div>
+                  <div title="Note: The DOB Building Information System will only show information for one building, even if there are multiple buildings on a property. If that's the case, you can click &quot;Buildings on Lot&quot; to view the others.">
+                  <a href="http://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Department of Buildings (DOB)</a>&nbsp;
+                 </div>
+                 <div>
+                  <div title="Note: Staten Island property documents are available through the Richmond County Clerk's office, not ACRIS">
+                  <a href="http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Property documents (ACRIS)</a>&nbsp;
+                 </div>
+                 <div>
+                   <a href="http://whoownswhat.justfix.nyc/bbl/{{content.data.borocode}}/{{content.data.block}}/{{content.data.lot}}" target="_blank">Ownership (Who Owns What)</a>            
+                 </div>
+                 <div>
+                   <a href="http://www.oasisnyc.net/map.aspx?zoomto=lot:{{content.data.bbl}}" target="_blank">Land Use info (OASIS)</a>
+                 </div>
+              </h6>
+             </div>   
+          </div>
+         <div class="cartodb-popup-tip-container"></div>
+      </div>
+    </script>
+    <script type="infowindow/html" id="dobscore_infowindow">
+      <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+        <div class="cartodb-popup-content-wrapper">
+          <div class="cartodb-popup-header">
+              <h2>{{content.data.address}}</h2>
+          </div>
+          <div class="cartodb-popup-content upper">
+              <h3>{{content.data.borough}}  {{content.data.zipcode}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span class = "smtext">BBL: {{content.data.bbl}}</span></h3>           
+          </div>
+          {{#content.data.numbldgs}}
+          <div class="cartodb-popup-content">
+            <h3>Number of Buildings: <strong>{{content.data.numbldgs}}</strong></h3>
+          </div>
+          {{/content.data.numbldgs}}
+          {{#content.data.unitsres}}
+         <div class="cartodb-popup-content">
+           <h3>Residential Units: <strong>{{content.data.unitsres}}</strong></h3>
+         </div>
+         {{/content.data.unitsres}}
+         {{#content.data.unitscomm}}
+         <div class="cartodb-popup-content">
+           <h3>Commercial Units: <strong>{{content.data.unitscomm}}</strong></h3>
+         </div>
+         {{/content.data.unitscomm}}
+          {{#content.data.total}}
+          <div class="cartodb-popup-content">
+            <h3>Total Construction Permits: <strong>{{content.data.total}}</strong></h3>
+          </div>
+          {{/content.data.total}} 
+         <div class="cartodb-popup-content gray">
+           <div class="cartodb-popup-content">
+              <h3><div class="linkstext"> Links:</div></h3>
+               <h6>
+              <div>
+                  <div class>
+                      <a href="https://portal.displacementalert.org/property/{{content.data.bbl}}" target="_blank"><strong>DAP Portal (New!)</strong></a>&nbsp;
+                    </div>
+                <div title="Note: The HPD portal will only show data for one building, but if there are others on the same property it will show &quot;Other Buildings on This Lot.&quot;">
+                   <a href="{{content.data.hpdlink}}" target="_blank">Housing Pres. and Development (HPD)</a>
+                 </div>
+                 <div>
+                  <div title="Note: The DOB Building Information System will only show data for one building, but if there are others on the same property you can click &quot;Buildings on Lot&quot; to view them.">
+                  <a href="http://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Department of Buildings (DOB)</a>&nbsp;
+                 </div>
+                 <div>
+                  <div title="Note: Staten Island property documents are available through the Richmond County Clerk's office, not ACRIS">
+                   <a href="http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Property documents (ACRIS)</a>&nbsp;
+                 </div>
+                 <div>
+                   <a href="http://whoownswhat.justfix.nyc/bbl/{{content.data.borocode}}/{{content.data.block}}/{{content.data.lot}}" target="_blank">Ownership (Who Owns What)</a>            
+                 </div>
+                 <div>
+                   <a href="http://www.oasisnyc.net/map.aspx?zoomto=lot:{{content.data.bbl}}" target="_blank">Land Use info (OASIS)</a>
+                 </div>
+              </h6>
+             </div>
+             </div>      
+       </div>
+       <div class="cartodb-popup-tip-container"></div>
+    </div>
+    </script>
+    <script type="infowindow/html" id="evicscore_infowindow">
+      <div class="cartodb-popup v2">
+        <a href="#close" class="cartodb-popup-close-button close">x</a>
+        <div class="cartodb-popup-content-wrapper">
+          <div class="cartodb-popup-header">
+              <h2>{{content.data.address}}</h2>
+          </div>
+          <div class="cartodb-popup-content upper">
+              <h3>{{content.data.borough}}  {{content.data.zipcode}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                  <span class = "smtext">BBL: {{content.data.bbl}}</span></h3>           
+          </div>
+          {{#content.data.numbldgs}}
+          <div class="cartodb-popup-content">
+            <h3>Number of Buildings: <strong>{{content.data.numbldgs}}</strong></h3>
+          </div>
+          {{/content.data.numbldgs}}
+          {{#content.data.unitsres}}
+         <div class="cartodb-popup-content">
+           <h3>Residential Units: <strong>{{content.data.unitsres}}</strong></h3>
+         </div>
+         {{/content.data.unitsres}}
+         {{#content.data.unitscomm}}
+         <div class="cartodb-popup-content">
+           <h3>Commercial Units: <strong>{{content.data.unitscomm}}</strong></h3>
+         </div>
+         {{/content.data.unitscomm}}
+         {{#content.data.evictions}}
+         <div class="cartodb-popup-content">
+           <h3>Evictions: <strong>{{content.data.evictions}}</strong></h3>
+          </div>
+          {{/content.data.evictions}}
+         <div class="cartodb-popup-content gray">
+           <div class="cartodb-popup-content">
+              <h3><div class="linkstext"> Links:</div></h3>
+               <h6>
+              <div>
+                  <div class>
+                      <a href="https://portal.displacementalert.org/property/{{content.data.bbl}}" target="_blank"><strong>DAP Portal (New!)</strong></a>&nbsp;
+                    </div>
+                 <div title="Note: The HPD portal will only show data for one building, but if there are others on the same property it will show &quot;Other Buildings on This Lot.&quot;">
+                   <a href="{{content.data.hpdlink}}" target="_blank">Housing Pres. and Development (HPD)</a>
+                 </div>
+                 <div>
+                  <div title="Note: The DOB Building Information System will only show data for one building, but if there are others on the same property you can click &quot;Buildings on Lot&quot; to view them.">
+                  <a href="http://a810-bisweb.nyc.gov/bisweb/PropertyProfileOverviewServlet?boro={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Department of Buildings (DOB)</a>&nbsp;
+                 </div>
+                 <div>
+                  <div title="Note: Staten Island property documents are available through the Richmond County Clerk's office, not ACRIS">
+                   <a href="http://a836-acris.nyc.gov/bblsearch/bblsearch.asp?borough={{content.data.borocode}}&block={{content.data.block}}&lot={{content.data.lot}}" target="_blank">Property documents (ACRIS)</a>&nbsp;
+                 </div>
+                 <div>
+                   <a href="http://whoownswhat.justfix.nyc/bbl/{{content.data.borocode}}/{{content.data.block}}/{{content.data.lot}}" target="_blank">Ownership (Who Owns What)</a>            
+                 </div>
+                 <div>
+                   <a href="http://www.oasisnyc.net/map.aspx?zoomto=lot:{{content.data.bbl}}" target="_blank">Land Use info (OASIS)</a>
+                 </div>
+              </h6>
+             </div>
+             </div>      
+       </div>
+       <div class="cartodb-popup-tip-container"></div>
+    </div>
+    </script>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="container-nav">
+        <ul class="navbar-list">
+            <li class="navbar-item">
+                <a class="navbar-link light" href="https://displacementalert.org">HOME</a>
+            </li>
+            <li class="navbar-item dropdown">
+                <div class="dropbtn">
+                    <a class="navbar-link light active" href="https://map.displacementalert.org/app">DAP MAP</a>
+                </div>
+                <div class="dropdown-content">
+                    <a class="light" href="https://displacementalert.org/map-tutorial">MAP TUTORIAL</a>
+                </div>
+            </li>
+            <li class="navbar-item dropdown">
+                <div class="dropbtn">
+                    <a class="navbar-link light" href="https://reports.displacementalert.org">DISTRICT REPORTS </a>
+                </div>
+                <div class="dropdown-content">
+                    <a class="light" href="https://displacementalert.org/reports-tutorial">REPORTS TUTORIAL</a>
+                </div>
+            </li>
+            <li class="navbar-item">
+              <a class="navbar-link light" href="http://www.displacementalert.org/watchlist">WATCH LIST</a>
+           </li>
+           <li class="navbar-item">
+            <a class="navbar-link light" href="https://portal.displacementalert.org/">PORTAL</a>
+           </li>
+            <li class="navbar-item">
+                <a class="navbar-link light" href="https://www.displacementalert.org/about">ABOUT</a>
+            </li>
+            <li class="navbar-item">
+                <a class="navbar-link light" href="https://www.displacementalert.org/contact-us">CONTACT</a>
+            </li>
+            <li>
+            <div id="google_translate_element"></div><script type="text/javascript">
+              function googleTranslateElementInit() {
+                new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE, autoDisplay: false, gaTrack: true, gaId: 'UA-112369835-1'}, 'google_translate_element');
+              }
+              </script><script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+            </li>      
+        </ul>
+    </div>
+  </nav>
+
+  <div id="searchcont">
+    <div id="searchhover">
+      <p>Tip: if you get no search results, try spelling out the street name and including the borough. E.g. instead of "50 Broad St" try "50 Broad Street Manhattan"</p>
+    </div>
+  </div>
+
+  <div class='container mainContainer'>
+    <div id='logo' class='logo top left hideLogo'>
+      <a href="http://anhd.org/" target="_blank"><img class='logoImg' src='assets/images/anhd_logo_white.png' alt="ANHD logo"/></a>
+    </div>
+    <div id='hamburger' class='hamburger top right hideHamburger'>
+      <i class="fa fa-bars fa-2x" aria-hidden="true"></i>
+    </div>
+    <div id='map-layers' class='ui map-layers top right hideMapLayers'>
+      <div class="help-tip" id="stab">
+        <p>This layer shows the change in the percentage of rent stabilized units between 2007 and 2017. Properties appearing green gained stabilized units and properties appearing yellow, orange, or red lost units. Visit the <a href="https://displacementalert.org/map-tutorial#deregulation" target="_blank">tutorial</a> page to learn more.</p>
+      </div>
+      <div class="help-tip" id="sales">
+        <p>This layer shows the most recent sale since 2007. Darker red indicates a higher sale price per unit. Click the (ACRIS) link for property documents and visit the <a href="https://displacementalert.org/map-tutorial#sales" target="_blank">tutorial</a> page to learn more..</p>
+      </div>
+      <div class="help-tip" id="dob">
+        <p>This layer shows Alteration 1 (Alt 1), Alteration 2 (Alt 2), New Building (NB), and Demolition (DM) permits issued by the Department of Buildings (DOB) since 2007. Darker red indicates more total permits per unit. DOB permits reveal development that can cause displacement and renovations that can be used to destabilize apartments. Visit the <a href="https://displacementalert.org/map-tutorial#construction" target="_blank">tutorial</a> page to learn more.</p>
+      </div>
+      <div class="help-tip" id="evictions">
+        <p>This layer shows the number of evictions executed by marshals in 2017 and 2018. Darker red indicates more evictions per unit. Visit the <a href="https://displacementalert.org/map-tutorial#evictions" target="_blank">tutorial</a> page to learn more.</p>
+      </div>
+      <div class="legendtext" style="padding:0;">Risk Layers</div>
+        <div>
+          <button id='rentregscore' data="0" class="radio1 selected navbtnwidth layerbtn"> 
+            Deregulation Risk
+          </button>
+          <div>
+              <div class="legend-cloropleth">
+                <ul>
+                  <li class="min">Units Gained</li>
+                  <li class="max">Units Lost</li>
+                  <li class="graph">
+                    <div class="colors">
+                      <div class="quartile" style="background-color:#88ce65"></div>
+                      <div class="quartile" style="background-color:#ddffcc"></div>
+                      <div class="quartile" style="background-color:#fafce5"></div>
+                      <div class="quartile" style="background-color:#fed976"></div>
+                      <div class="quartile" style="background-color:#fd8d3c"></div>
+                      <div class="quartile" style="background-color:#e31a1c"></div>
+                      <div class="quartile" style="background-color:#800026"></div>
+                    </div>
+                    </li>
+                  </ul>
+                </div>
+            </div>
+          </div>
+        <button id='dofscore' data="2" class="radio1 navbtnwidth layerbtn">New Sale Risk</button>
+        <div>
+          <div class="legend-cloropleth">
+            <ul>
+              <li class="min">Low $ Price</li>
+              <li class="max">High $ Price</li>
+              <li class="graph">
+                <div class="colors">
+                  <div class="quartile" style="background-color:#ffffcc"></div>
+                  <div class="quartile" style="background-color:#fed976"></div>
+                  <div class="quartile" style="background-color:#feb24c"></div>
+                  <div class="quartile" style="background-color:#fd8d3c"></div>
+                  <div class="quartile" style="background-color:#fc4e2a"></div>
+                  <div class="quartile" style="background-color:#bd0026"></div>
+                  <div class="quartile" style="background-color:#800026"></div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+      <button id='dobscore' data="1" class="radio1 navbtnwidth layerbtn">Construction Risk</button>
+      <div>
+        <div class="legend-cloropleth">
+          <ul>
+            <li class="min">Few Permits</li>
+            <li class="max">Many Permits</li>
+            <li class="graph">
+              <div class="colors">
+                <div class="quartile" style="background-color:#ffffcc"></div>
+                <div class="quartile" style="background-color:#fed976"></div>
+                <div class="quartile" style="background-color:#feb24c"></div>
+                <div class="quartile" style="background-color:#fd8d3c"></div>
+                <div class="quartile" style="background-color:#fc4e2a"></div>
+                <div class="quartile" style="background-color:#bd0026"></div>
+                <div class="quartile" style="background-color:#800026"></div>
+              </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+      <button id='evicscore' data="3" class="radio1 navbtnwidth layerbtn">Eviction Risk</button>
+      <div>
+        <div class="legend-cloropleth">
+          <ul>
+            <li class="min">Few Evictions</li>
+            <li class="max">Many Evictions</li>
+            <li class="graph">
+              <div class="colors">
+                <div class="quartile" style="background-color:#ffffcc"></div>
+                <div class="quartile" style="background-color:#fed976"></div>
+                <div class="quartile" style="background-color:#feb24c"></div>
+                <div class="quartile" style="background-color:#fd8d3c"></div>
+                <div class="quartile" style="background-color:#fc4e2a"></div>
+                <div class="quartile" style="background-color:#bd0026"></div>
+                <div class="quartile" style="background-color:#800026"></div>
+              </div>
+              </li>
+            </ul>
+          </div>
+    </div>
+      <hr />
+      <div class="legendtext">Geography layers</div>
+      <button id='cd' data="5" class="radio2 navbtnwidth geolayer">Council Districts</button>
+      <button id='cb' data="4" class="radio2 navbtnwidth geolayer">Community Boards</button>
+      <button id='zipcode' data="6" class="radio2 navbtnwidth geolayer">Zip Codes</button>
+      <hr />
+      <div class="legendtext">Zoom to a geography</div>
+      <select id="cc-dist-select" class='go-to-cc geogtext navbtnwidth'></select>
+      <select id="cb-dist-select" class='go-to-cb geogtext navbtnwidth'></select>
+      <select id="zipcode-select" class='go-to-zipcode geogtext navbtnwidth'></select>
+      <div class="updatetext">Data included: 1/1/07 through 12/31/18</div>
+      <div class="updatetext">Map last updated: April 2019</div>
+    </div>
+    <div id='map'></div>
+    <!-- MODAL–––––––––––––––––––––––––––––––––––––––––––––––––– -->
+    <div id="openModal" class="modalDialog">
+      <div class="modalPosition">
+        <a href="#close" title="Close" class="close">X</a>
+        <div id="dapwelcome">Welcome to the <br> Displacement Alert Project (DAP) Map 2.0!</div>
+          <div>
+        <p class="modalText">The Displacement Alert Map is a rich resource of more than a decade of key data on residential displacement in New York City. The map shows loss of rent-stabilized units, property sales, and construction permits going back to 2007, and evictions from 2017-2018. </p>
+        <p class="modalText">Each risk factor is its own layer, with properties color-coded by risk level. Click buttons on the right to change layers and click a property to view details. Find an address using the search button on the top left, or zoom to a geography using the drop-down options on the right. </p>
+          </div>
+          <table class="modalbuttons">
+            <tr>
+              <th class="modalbuttons">
+                <a class="button width200" id="learn" href="https://displacementalert.org/map-tutorial" target="_blank">Learn More</a>
+              </th>
+              </tr>
+              <tr>
+              <th class="modalbuttons">
+                <a class="button width200" id="start" href="#close">Let's get started!</a>
+              </th>
+            </tr>
+          </table>
+        <label id="toggleintro">
+          <input type="checkbox" id="toggleIntroCookie" value="NoShow">
+             Don't show this message again.
+        </label>
+      </div>
+    </div>
+
+  </div>
+  <script src="assets/vendor/js/cartodb.js"></script>
+  <script src="assets/vendor/js/Control.Geocoder.js"></script>
+  <script src="assets/vendor/js/jquery.cookie.js"></script>
+  <!-- <script src="assets/js/carto.js"></script> -->
+  <script src="assets/js/main.js"></script>
+  <script type="text/javascript">
+    $(document).ready(app.map.init);
+  </script>
+
+</body>
+</html>

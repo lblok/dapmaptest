@@ -7,47 +7,59 @@ var map,
     layerToggle,
     mapLayers,
     carto,
-    sql;
+    sql,
+    infowindows;
+
+    // mapboxgl.accessToken = 'pk.eyJ1IjoibGJsb2siLCJhIjoiY2o3djQ2ODd4MnVjMjJwbjBxZWZtZDB2ZiJ9.4gctlFUX_n0BzOAwbuL2aw';
+    // const map = new mapboxgl.Map({
+    // container: 'map',
+    // style: 'mapbox://styles/lblok/cjk4889sb29b12splkdw0pzop',
+    // center: [-73.919606, 40.677795],
+    // zoom: 12.0
+    // });
 
 app.map = (function(w, d, L, $) {
 
 
   function initMap() {
     // initiates the Leaflet map
-    basemapLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://carto.com/attributions">Carto</a>'
+    basemapLayer = L.tileLayer('https://api.mapbox.com/styles/v1/lblok/cjk4889sb29b12splkdw0pzop/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibGJsb2siLCJhIjoiY2o3djQ2ODd4MnVjMjJwbjBxZWZtZDB2ZiJ9.4gctlFUX_n0BzOAwbuL2aw', {
+      maxZoom: 22,  
+      attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://carto.com/attributions">Carto</a>'
       });
 
-    map = new L.Map('map', {
-      center: [40.694045, -73.946571],
-      zoom: 12,
-      zoomControl: false,
-    });
 
-    new L.Control.Zoom({ position: 'bottomleft' }).addTo(map);
+      
+      
+      map = new L.Map('map', {
+        center: [40.694045, -73.946571],
+        zoom: 12,
+        zoomControl: false,
+      });
+      
+      new L.Control.Zoom({ position: 'bottomleft' }).addTo(map);
+      
+      map.addLayer(basemapLayer);
+      
+      // add address geocoder
+      var geocoder = L.Control.geocoder({
+        position: 'topleft', 
+        collapsed: true, 
+        placeholder:'', 
+        defaultMarkGeocode: true, 
+        geocoder:new L.Control.Geocoder.Bing("AnnevUOl-OXpLPrGjyTTzrwfiIBtB9CLKnO4rUwTKNlBXJS_2cr_nOA6pAoEUr7E"),
+        })
+        .on('markgeocode', function(e) {
+        var bbox = e.geocode.bbox;
+        map.fitBounds(bbox);
+      })
+      .addTo(map);
+      
 
-    map.addLayer(basemapLayer);
-
-    // add address geocoder
-    var geocoder = L.Control.geocoder({
-      position: 'bottomleft', 
-      collapsed: true, 
-      placeholder:'Address Search (Tip: include borough)', 
-      defaultMarkGeocode: true, 
-      geocoder:new L.Control.Geocoder.Google()
-    })
-    .on('markgeocode', function(e) {
-      var bbox = e.geocode.bbox;
-      map.fitBounds(bbox);
-    })
-    .addTo(map);
-
-    
-
-
+    }
     // set the cartodb sql object up
     sql = cartodb.SQL({ user: 'anhdnyc' });
-  }
+  
 
   function createCDBLayer() {
     // adds the CartoDB overlay from the viz.json URL
@@ -64,9 +76,6 @@ app.map = (function(w, d, L, $) {
         name: 'DAP_Map_v2',
         layers: [
           {
-            layer_name: "riskscore",
-          },
-          {
             layer_name: "rentregscore"
           },
           {
@@ -74,6 +83,9 @@ app.map = (function(w, d, L, $) {
           },
           {
             layer_name: "dofscore",
+          },
+          {
+            layer_name: "evicscore",
           },
           {
             layer_name: "cb",
@@ -88,7 +100,6 @@ app.map = (function(w, d, L, $) {
       }
     };
 
-    
 
     // you can switch how the cartodb layers are added below by passing either
     // layerSource or vizJSON as the second parameter to cartodb.createLayer()
@@ -105,29 +116,17 @@ app.map = (function(w, d, L, $) {
         }
 
         /* when using the layerSource object, create infowindows like so: */
-        cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(0),["cartodb_id"], {infowindowTemplate: $('#riskscore_infowindow').html()});
-        cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(1),["cartodb_id"], {infowindowTemplate: $('#rentregscore_infowindow').html()});
-        cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(2),["cartodb_id"], {infowindowTemplate: $('#dobscore_infowindow').html()});
-        cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(3),["cartodb_id"], {infowindowTemplate: $('#dofscore_infowindow').html()});
+        infowindows = [];
+        infowindows[0] = cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(0),["cartodb_id"], {infowindowTemplate: $('#rentregscore_infowindow').html()});
+        infowindows[1] = cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(1),["cartodb_id"], {infowindowTemplate: $('#dobscore_infowindow').html()});
+        infowindows[2] = cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(2),["cartodb_id"], {infowindowTemplate: $('#dofscore_infowindow').html()});
+        infowindows[3] = cdb.vis.Vis.addInfowindow(map,layer.getSubLayer(3),["cartodb_id"], {infowindowTemplate: $('#evicscore_infowindow').html()});
 
-        
 
-        // very sloppy example tooltip creation
-        // todo: make a separate function for these and use a templating engine like handlebars
-/*        var testTooltip = layer.leafletMap.viz.addOverlay({
-          type: 'tooltip',
-          layer: layer.getSubLayer(0),
-          template: '<div class="cartodb-tooltip-content-wrapper"><div class="cartodb-tooltip-content"><h4>Address</h4><p>{{address}}</p></div></div>',
-          width: 200,
-          position: 'bottom|right',
-          fields: [{ address: 'address' }]
-        });
-        $('.cartodb-map.leaflet-container').append(testTooltip.render().el);*/
-
-        mapLayers[0].show(); // riskscore layer: showing in v2.1
-        mapLayers[1].hide(); // rentregscore
-        mapLayers[2].hide(); // dobscore
-        mapLayers[3].hide(); // dofscore
+        mapLayers[0].show(); // rentregscore
+        mapLayers[1].hide(); // dobscore
+        mapLayers[2].hide(); // dofscore
+        mapLayers[3].hide(); // evicscore
 
         mapLayers[4].hide(); // community districts
         mapLayers[4].setInteraction(false);
@@ -140,24 +139,15 @@ app.map = (function(w, d, L, $) {
         // value from the template like so:
         // layer.setParams({ cc_sql: 30 });
 
-        // listen for opening of popups to fomat numbers
-        mapLayers[1].on('featureClick', function(e, latlng, pos, data, layer) {
+        // listen for opening of popups to fomat numbers - THIS IS PROBABLY NOT NECESSARY ANYMORE 
+        mapLayers[0].on('featureClick', function(e, latlng, pos, data, layer) {
           $('#pctchange').text((parseFloat($('#pctchange').text())*1).toFixed(0) + "%");
         });
 
-        mapLayers[3].on('featureClick', function(e, latlng, pos, data, layer) {
+        mapLayers[2].on('featureClick', function(e, latlng, pos, data, layer) {
           if ($('#pctchange').text().indexOf('%') == -1) {
             $('#pctchange').text((parseFloat($('#pctchange').text())*1).toFixed(0) + "%");
           }
-          // if ($('#saleprice').text().indexOf('$') == -1) {
-          //   $('#saleprice').text("$" + numberWithCommas(parseInt($('#saleprice').text())));
-          // }
-          // if ($('#priceresunit').text().indexOf('$') == -1) {
-          //   $('#priceresunit').text("$" + numberWithCommas(parseInt($('#priceresunit').text())));
-          // }
-          // if ($('#ppunit10_plutoresdunits').text().indexOf('$') == -1) {
-          //   $('#ppunit10_plutoresdunits').text("$" + numberWithCommas(parseInt($('#ppunit10_plutoresdunits').text())));
-          // }
         });
 
       })
@@ -169,21 +159,23 @@ app.map = (function(w, d, L, $) {
   function wireLayerBtns() {
     // wires the UI map layer buttons to CartoDB
     layerToggle = {
-      // hide / show the default map layer (rentreg score)
+      // hide / show the default map layer (rentregscore)
+      
 
-      riskscore: function() {
+      rentregscore: function() {
         if (mapLayers[0].isVisible()) {
           mapLayers[0].hide();
+          $('.cartodb-infowindow').css('visibility', 'hidden');
         } else {
           hideAllLayers();
           mapLayers[0].show();
-          // set max legend value to 300
-          $('#maxLegendNumber').text(300);
+          // set max legend value to 100
+          $('#maxLegendNumber').text(100);
         }
 
         return true;
       },
-      rentregscore: function() {
+      dobscore: function() {
         if (mapLayers[1].isVisible()) {
           mapLayers[1].hide();
           $('.cartodb-infowindow').css('visibility', 'hidden');
@@ -196,7 +188,7 @@ app.map = (function(w, d, L, $) {
 
         return true;
       },
-      dobscore: function() {
+      dofscore: function() {
         if (mapLayers[2].isVisible()) {
           mapLayers[2].hide();
           $('.cartodb-infowindow').css('visibility', 'hidden');
@@ -206,10 +198,9 @@ app.map = (function(w, d, L, $) {
           // set max legend value to 100
           $('#maxLegendNumber').text(100);
         }
-
         return true;
       },
-      dofscore: function() {
+      evicscore: function() {
         if (mapLayers[3].isVisible()) {
           mapLayers[3].hide();
           $('.cartodb-infowindow').css('visibility', 'hidden');
@@ -219,16 +210,16 @@ app.map = (function(w, d, L, $) {
           // set max legend value to 100
           $('#maxLegendNumber').text(100);
         }
-
         return true;
       },
+      // Modify to allow multiple geographies to be visible at once
       cd: function() {
-        // hide / show council districts
-        if (mapLayers[4].isVisible() || mapLayers[6].isVisible()) {
-          mapLayers[4].hide();
-          mapLayers[6].hide();
-          $('.go-to-cb :nth-child(1)').prop('selected', true);          
-        }
+        // would use the below if i wanted geographies to toggle instead of check on and off
+        // if (mapLayers[4].isVisible() || mapLayers[6].isVisible()) {
+        //   mapLayers[4].hide();
+        //   mapLayers[6].hide();
+        //   $('.go-to-cb :nth-child(1)').prop('selected', true);          
+        // }
         if (mapLayers[5].isVisible()) {
           mapLayers[5].hide();
         } else {
@@ -237,12 +228,11 @@ app.map = (function(w, d, L, $) {
         return true;
       },
       cb: function() {
-        // hide / show community boards
-        if (mapLayers[5].isVisible() || mapLayers[6].isVisible()) {
-          mapLayers[5].hide();
-          mapLayers[6].hide();
-          $('.go-to-cc :nth-child(1)').prop('selected', true);
-        }
+        // if (mapLayers[5].isVisible() || mapLayers[6].isVisible()) {
+        //   mapLayers[5].hide();
+        //   mapLayers[6].hide();
+        //   $('.go-to-cc :nth-child(1)').prop('selected', true);
+        // }
         if (mapLayers[4].isVisible()) {
           mapLayers[4].hide();
         } else {
@@ -251,12 +241,11 @@ app.map = (function(w, d, L, $) {
         return true;
       },
       zipcode: function() {
-        // hide / show community boards
-        if (mapLayers[4].isVisible() || mapLayers[5].isVisible()) {
-          mapLayers[4].hide();
-          mapLayers[5].hide();
-          $('.go-to-zipcode :nth-child(1)').prop('selected', true);
-        }
+        // if (mapLayers[4].isVisible() || mapLayers[5].isVisible()) {
+        //   mapLayers[4].hide();
+        //   mapLayers[5].hide();
+        //   $('.go-to-zipcode :nth-child(1)').prop('selected', true);
+        // }
         if (mapLayers[6].isVisible()) {
           mapLayers[6].hide();
         } else {
@@ -267,11 +256,15 @@ app.map = (function(w, d, L, $) {
     }
 
     function hideAllLayers() {
+      // mapLayers[0].hide();
       mapLayers[0].hide();
       mapLayers[1].hide();
       mapLayers[2].hide();
       mapLayers[3].hide();
-      $('.cartodb-infowindow').css('visibility', 'hidden');
+
+      for (let index = 0; index < infowindows.length; index++) {
+        infowindows[index].model.set("visibility", !1);
+      }
     }
 
     $('.radio1').click(function(e) {
@@ -284,18 +277,19 @@ app.map = (function(w, d, L, $) {
         $(this).removeClass('selected');
       }
     });
+    // Changed 'selected' to false 'noselect' class
     $('.radio2').click(function(e) {
       e.preventDefault();
       console.log($(this).attr('id'));
       layerToggle[$(this).attr('id')]();
-      if (!$(this).hasClass("selected")) {
-        $('.radio2').removeClass('selected');
-        $(this).addClass('selected');
+      if (!$(this).hasClass("noselect")) {
+        $('.radio2').removeClass('noselect');
+        $(this).addClass('noselect');
       } else {
-        $(this).removeClass('selected');
+        $(this).removeClass('noselect');
+        }
       }
-
-    });
+    );
     
   }
 
@@ -309,9 +303,6 @@ app.map = (function(w, d, L, $) {
       if (name === 'coundist') {
         first = '<option val="0">Select a Council District</option>';
         geoName = 'Council District ';
-      } else if (name === 'borocd') {
-        first = '<option val="0">Select a Community Board</option>';
-        geoName = 'Community Board ';
       } else {
         first = '<option val="0">Select a Zip Code</option>';
         geoName = '';
@@ -320,6 +311,20 @@ app.map = (function(w, d, L, $) {
       toReturn += first;
       toReturn += arr.map(function(el){
         return '<option value="' + el[name] + '">' +
+          geoName + el[name] + '</option>';
+      }).join('');
+
+      return toReturn;
+    }
+
+    function createCBspecial(arr, name, number) {
+      var toReturn = '',
+          first = '<option val="0">Select a Community Board</option>',
+          geoName = '';
+
+      toReturn += first;
+      toReturn += arr.map(function(el){
+        return '<option value="' + el[number] + '">' +
           geoName + el[name] + '</option>';
       }).join('');
 
@@ -340,9 +345,9 @@ app.map = (function(w, d, L, $) {
 
     
     function initCB() {
-      sql.execute('SELECT borocd2 FROM nycd ORDER BY borocd2 ASC')
+      sql.execute('SELECT borocd2,borocd FROM nycd_new2 ORDER BY borocd ASC')
         .done(function(data){
-          buildSelect('.go-to-cb', createOptions(data.rows, 'borocd2'));
+          buildSelect('.go-to-cb', createCBspecial(data.rows, 'borocd2', 'borocd'));
           initZipCode();
         });
     }
@@ -358,32 +363,45 @@ app.map = (function(w, d, L, $) {
     function selectEvents() {
       $('.go-to-cc').on('change', function(e){
         // set the other selects to first option
-        $('.go-to-cb :nth-child(1)').prop('selected', true);
-        $('.go-to-zipcode :nth-child(1)').prop('selected', true);
+        $('.go-to-cb :nth-child(1)').prop('btnactive', true);
+        $('.go-to-zipcode :nth-child(1)').prop('btnactive', true);
         console.log($(this).val());
         getCC($(this).val());
-        $('.radio2').removeClass('selected');
-        $('#cd').addClass('selected');
+        $('.radio2').removeClass('btnactive');
+        $('#cd').addClass('btnactive');
       });
 
       $('.go-to-cb').on('change', function(e){
         // set the other select to first option
-        $('.go-to-cc :nth-child(1)').prop('selected', true);
-        $('.go-to-zipcode :nth-child(1)').prop('selected', true);
+        $('.go-to-cc :nth-child(1)').prop('btnactive', true);
+        $('.go-to-zipcode :nth-child(1)').prop('btnactive', true);
         console.log($(this).val());
         getCB($(this).val());
-        $('.radio2').removeClass('selected');
-        $('#cb').addClass('selected');
+        $('.radio2').removeClass('btnactive');
+        $('#cb').addClass('btnactive');
       });
 
       $('.go-to-zipcode').on('change', function(e){
         // set the other select to first option
-        $('.go-to-cb :nth-child(1)').prop('selected', true);
-        $('.go-to-cc :nth-child(1)').prop('selected', true);
+        $('.go-to-cb :nth-child(1)').prop('btnactive', true);
+        $('.go-to-cc :nth-child(1)').prop('btnactive', true);
         getZipCode($(this).val());
-        $('.radio2').removeClass('selected');
-        $('#zipcode').addClass('selected');
+        $('.radio2').removeClass('btnactive');
+        $('#zipcode').addClass('btnactive');
       });
+      
+        // Add btnactive class to "radio2" on click
+      
+        var acc = document.getElementsByClassName("radio2");
+        var i;
+        for (i = 0; i < acc.length; i++) {
+        acc[i].addEventListener("click", function() {
+        /* Toggle between adding and removing the "active" class,
+        to highlight the button that controls the panel */
+        this.classList.toggle("btnactive");
+        });
+        }
+
     }
 
     initCC();
@@ -399,7 +417,8 @@ app.map = (function(w, d, L, $) {
           mapLayers[5].show();
           mapLayers[6].hide();
           map.fitBounds(data);
-        });
+        });   
+
     }
   }
 
@@ -407,7 +426,7 @@ app.map = (function(w, d, L, $) {
     // to set the map position to a community board
     // zero means the first option in the select
     if (num !==0) {
-      sql.getBounds('SELECT * FROM nycd WHERE borocd2 = {{id}}', { id: num })
+      sql.getBounds('SELECT * FROM nycd_new2 WHERE borocd = {{id}}', { id: num })
         .done(function(data){
           mapLayers[4].show();
           mapLayers[5].hide();
@@ -457,6 +476,9 @@ app.map = (function(w, d, L, $) {
   function numberWithCommas(x) {
     return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
+
+
+
 
   function init(){
     initMap();
