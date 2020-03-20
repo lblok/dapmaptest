@@ -73,7 +73,7 @@ app.map = (function(w, d, L, $) {
       user_name: 'anhdnyc',
       type: 'namedmap',
       named_map: {
-        name: 'dapmaptest',
+        name: 'DAP_Map_v2',
         layers: [
           {
             layer_name: "rentregscore"
