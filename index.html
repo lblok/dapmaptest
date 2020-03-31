@@ -76,11 +76,11 @@
            <h3>Stabilized Units in 2007: <strong>{{content.data.uc2007}}</strong></h3>
          </div>
          {{/content.data.uc2007}}
-         {{#content.data.uc2017}}
+         {{#content.data.uc2018}}
          <div class="cartodb-popup-content">
-           <h3>Stabilized Units in 2017: <strong>{{content.data.uc2017}}</strong></h3>
+           <h3>Stabilized Units in 2018: <strong>{{content.data.uc2018}}</strong></h3>
          </div>
-         {{/content.data.uc2017}}
+         {{/content.data.uc2018}}
          {{#content.data.stabloss}}
          <div class="cartodb-popup-content">
            <h3>Percent Change Since 2007: <strong><span id="pctchange">{{content.data.stabloss}}</span></strong></h3>
@@ -387,7 +387,7 @@
     </div>
     <div id='map-layers' class='ui map-layers top right hideMapLayers'>
       <div class="help-tip" id="stab">
-        <p>This layer shows the change in the percentage of rent stabilized units between 2007 and 2017. Properties appearing green gained stabilized units and properties appearing yellow, orange, or red lost units. Please note that properties can incorrectly appear to have lost or gained all of their stabilized units in that time due to an owner's failure to register. You can examine the year-by-year breakdown of stabilized units using the <a href="https://portal.displacementalert.org" target="_blank">DAP Portal</a> link in a property's pop-up window. Visit the <a href="https://displacementalert.org/map-tutorial#deregulation" target="_blank">tutorial</a> page to learn more.</p>
+        <p>This layer shows the change in the percentage of rent stabilized units between 2007 and 2018. Properties appearing green gained stabilized units and properties appearing yellow, orange, or red lost units. Please note that properties can incorrectly appear to have lost or gained all of their stabilized units in that time due to an owner's failure to register. You can examine the year-by-year breakdown of stabilized units using the <a href="https://portal.displacementalert.org" target="_blank">DAP Portal</a> link in a property's pop-up window. Visit the <a href="https://displacementalert.org/map-tutorial#deregulation" target="_blank">tutorial</a> page to learn more.</p>
       </div>
       <div class="help-tip" id="sales">
         <p>This layer shows the most recent sale since 1/1/07. Darker red indicates a higher sale price per unit. Click the (ACRIS) link for property documents and visit the <a href="https://displacementalert.org/map-tutorial#sales" target="_blank">tutorial</a> page to learn more..</p>
@@ -493,8 +493,8 @@
       <select id="cc-dist-select" class='go-to-cc geogtext navbtnwidth'></select>
       <select id="cb-dist-select" class='go-to-cb geogtext navbtnwidth'></select>
       <select id="zipcode-select" class='go-to-zipcode geogtext navbtnwidth'></select>
-      <div class="updatetext">Data included: 1/1/07 through 6/30/19</div>
-      <div class="updatetext">Map last updated: 10/18/19</div>
+      <div class="updatetext">Data included: 1/1/07 through 12/31/19</div>
+      <div class="updatetext">Map last updated: 3/23/20</div>
     </div>
     <div id='map'></div>
     <!-- MODAL–––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -503,8 +503,9 @@
         <a href="#close" title="Close" class="close">X</a>
         <div id="dapwelcome">Welcome to the <br> Displacement Alert Project (DAP) Map!</div>
           <div>
-        <p class="modalText">DAP Map is a rich resource of more than a decade of key data on residential displacement in New York City. The map shows loss of rent-stabilized units, property sales, and construction permits going back to 2007, and evictions since 2017. </p>
+        <p class="modalText">DAP Map is a rich resource of more than a decade of key data on displacement in New York City. The map shows loss of rent-stabilized units, property sales, and construction permits since 2007, and evictions since 2017. </p>
         <p class="modalText">Each risk factor is its own layer, with properties color-coded by risk level. Click buttons on the right to change layers and click a property to view details. Find an address using the search button on the top left, or zoom to a geography using the drop-down options on the right. </p>
+        <p class="modalText">We update DAP Map twice a year, and we recommend you visit <a href="https://portal.displacementalert.org" target="_blank">DAP Portal<a> </a>for real-time displacement data.</a> </p>
           </div>
           <table class="modalbuttons">
             <tr>
@@ -518,7 +519,7 @@
               </th>
             </tr>
           </table>
-        <label id="toggleintro">
+        <label id="toggleintro" style="font-size:12px;">
           <input type="checkbox" id="toggleIntroCookie" value="NoShow">
              Don't show this message again.
         </label>

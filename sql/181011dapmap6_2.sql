@@ -52,7 +52,7 @@ saleprice/nullif(totalunits,0) as ppuval,
 -- flag coops
 case when totalunits = 0 and saleprice is not null  and pluto.unitsres > 0 then 'Coop Sale' else null end as coop,
 evictions,
-evictions*100/nullif(pluto.unitsres,0) as evicscore
+evictions*100/nullif(pluto.unitsres,0) as evicscore2
 from pluto_18v1 pluto 
 left join dap_dob181011 dob on dob.bbl = pluto.bbl
 left join rentstab stab on ucbbl = pluto.bbl
@@ -67,6 +67,6 @@ stabloss = null,
 ppu = null,
 ppuval = null,
 evictions = null,
-evicscore = null
+evicscore2 = null
 where unitsres = 0;
 

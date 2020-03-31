@@ -376,7 +376,7 @@ cartodb-popup-content-wrapper {
 }
 
 .modalDialog > div {
-  width: 260px;
+  width: 280px;
   position: relative;
   margin: 10% auto;
   padding: 5px 15px 0px 15px;
@@ -910,7 +910,7 @@ div.upper h3{
   }
 
   .modalDialog > div {
-    width: 400px;
+    width: 420px;
   }
 
   table.modalbuttons {
